@@ -77,7 +77,7 @@ class CentralUserProviderPreview:
             "type": UserType.email.value,
             "roles": [{"role": role.value}],
         }
-        apiClient.users.set(assignee, payload)
+        return apiClient.users.set(assignee, payload)
 
     def add_service_principal(
         self,
@@ -102,4 +102,4 @@ class CentralUserProviderPreview:
             "roles": [{"role": role.value}],
         }
 
-        apiClient.users.set(assignee, payload)
+        return apiClient.users.set(assignee, payload)

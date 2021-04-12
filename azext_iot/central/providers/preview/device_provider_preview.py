@@ -74,8 +74,10 @@ class CentralDeviceProviderPreview:
         token = _utility.get_token_credential(self._cmd)
         apiClient = IotCentralApiPreview(token, self._app_id, central_dns_suffix)
 
-        device = Device(diplay_name=device_name, instance_of=instance_of, simulated=simulated)
-        
+        device = Device()
+        device.display_name = device_name
+        device.instance_of = instance_of
+        device.simulated = simulated
         result = apiClient.devices.set(device_id, device)
         if not result:
             raise CLIError("No device found with id: '{}'.".format(device_id))
@@ -105,7 +107,6 @@ class CentralDeviceProviderPreview:
 
         device = self.get_device(device_id, central_dns_suffix)
         status = parse_device_status(device);
-        print(status)
         if status == DeviceStatus.provisioned:
             credentials = self.get_device_credentials(
                 device_id=device_id, central_dns_suffix=central_dns_suffix
@@ -164,5 +165,10 @@ class CentralDeviceProviderPreview:
         logger.warning(
         "This command may take a long time to complete if your app contains a lot of devices"
         )
-
-        return apiClient.devices.list()
+        
+        devices = apiClient.devices.list()
+        registration_summary = {status.value: 0 for status in DeviceStatus}
+        for device in devices:
+            status = parse_device_status(device);
+            registration_summary[status.value] += 1
+        return registration_summary

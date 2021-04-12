@@ -10,7 +10,6 @@ Factory functions for IoT Hub and Device Provisioning Service.
 
 from azext_iot.common.sas_token_auth import SasTokenAuthentication
 from azext_iot.common.shared import SdkType
-from azext_iot.constants import USER_AGENT
 from msrestazure.azure_exceptions import CloudError
 
 __all__ = [
@@ -71,10 +70,7 @@ class SdkResolver(object):
 
     def get_sdk(self, sdk_type):
         sdk_map = self._construct_sdk_map()
-        sdk_client = sdk_map[sdk_type]()
-        sdk_client.config.enable_http_logger = True
-        sdk_client.config.add_user_agent(USER_AGENT)
-        return sdk_client
+        return sdk_map[sdk_type]()
 
     def _construct_sdk_map(self):
         return {

@@ -135,6 +135,7 @@ class DevicesOperations(object):
         :rtype: ~iot_central_api_v1.models.Device
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        print("here")
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Device"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError

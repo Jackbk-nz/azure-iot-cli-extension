@@ -18,7 +18,7 @@ logger = get_logger(__name__)
 
 
 class CentralUserProviderV1:
-    def __init__(self, cmd, app_id: str, token=None):
+    def __init__(self, cmd, app_id: str, token=None, central_dns_suffix=CENTRAL_ENDPOINT):
         """
         Provider for device APIs
 
@@ -33,11 +33,14 @@ class CentralUserProviderV1:
         self._cmd = cmd
         self._app_id = app_id
         self._token = token
+        self.central_dns_suffix = central_dns_suffix
 
 
     def get_user_list(
-        self, central_dns_suffix=CENTRAL_ENDPOINT,
+        self, central_dns_suffix=None,
     ):
+        if central_dns_suffix == None: 
+            central_dns_suffix = self.central_dns_suffix
         token = _utility.get_token_credential(self._cmd)
         apiClient = IotCentralApiV1(token, self._app_id, central_dns_suffix)
         
@@ -45,16 +48,20 @@ class CentralUserProviderV1:
 
 
     def get_user(
-        self, user_id, central_dns_suffix=CENTRAL_ENDPOINT,
+        self, user_id, central_dns_suffix=None,
     ):
+        if central_dns_suffix == None: 
+            central_dns_suffix = self.central_dns_suffix
         token = _utility.get_token_credential(self._cmd)
         apiClient = IotCentralApiV1(token, self._app_id, central_dns_suffix)
         
         return apiClient.users.get(user_id)
 
     def delete_user(
-        self, user_id, central_dns_suffix=CENTRAL_ENDPOINT,
+        self, user_id, central_dns_suffix=None,
     ):
+        if central_dns_suffix == None: 
+            central_dns_suffix = self.central_dns_suffix
         token = _utility.get_token_credential(self._cmd)
         apiClient = IotCentralApiV1(token, self._app_id, central_dns_suffix)
         
@@ -65,8 +72,10 @@ class CentralUserProviderV1:
         assignee: str,
         email: str,
         role: Role,
-        central_dns_suffix=CENTRAL_ENDPOINT,
+        central_dns_suffix=None,
     ):
+        if central_dns_suffix == None: 
+            central_dns_suffix = self.central_dns_suffix
         if not email:
             raise CLIError("Must specify --email when adding a user by email")
 
@@ -74,10 +83,10 @@ class CentralUserProviderV1:
         apiClient = IotCentralApiV1(token, self._app_id, central_dns_suffix)
         payload = {
             "email": email,
-            "type": UserType.email.value,
+            "type": "email",
             "roles": [{"role": role.value}],
         }
-        apiClient.users.set(assignee, payload)
+        return apiClient.users.set(assignee, payload)
 
     def add_service_principal(
         self,
@@ -85,8 +94,10 @@ class CentralUserProviderV1:
         tenant_id: str,
         object_id: str,
         role: Role,
-        central_dns_suffix=CENTRAL_ENDPOINT,
+        central_dns_suffix=None,
     ):
+        if central_dns_suffix == None: 
+            central_dns_suffix = self.central_dns_suffix
         if not tenant_id:
             raise CLIError("Must specify --tenant-id when adding a service principal")
 
@@ -98,8 +109,8 @@ class CentralUserProviderV1:
         payload = {
             "tenantId": tenant_id,
             "objectId": object_id,
-            "type": UserType.service_principal.value,
+            "type": "servicePrincipal",
             "roles": [{"role": role.value}],
         }
 
-        apiClient.users.set(assignee, payload)
+        return apiClient.users.set(assignee, payload)

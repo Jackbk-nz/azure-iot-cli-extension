@@ -7,7 +7,6 @@
 
 
 from azext_iot.constants import CENTRAL_ENDPOINT
-from azext_iot.central.providers import CentralApiTokenProvider
 from azext_iot.central.models.enum import Role
 from azext_iot.central.providers.preview import CentralApiTokenProviderPreview
 from azext_iot.central.providers.v1 import CentralApiTokenProviderV1

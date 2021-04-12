@@ -5,7 +5,7 @@ def parse_device_status(device) -> DeviceStatus:
         if hasattr(device, 'approved') and not device.approved:
             return DeviceStatus.blocked
 
-        if hasattr(device, 'instance_of') and not device.instance_of:
+        if hasattr(device, 'instance_of') and not device.instance_of or hasattr(device, 'template') and not device.template:
             return DeviceStatus.unassociated
 
         if not device.provisioned:

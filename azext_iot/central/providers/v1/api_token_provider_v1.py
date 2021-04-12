@@ -17,7 +17,7 @@ logger = get_logger(__name__)
 
 
 class CentralApiTokenProviderV1:
-    def __init__(self, cmd, app_id: str, token=None):
+    def __init__(self, cmd, app_id: str, token=None, central_dns_suffix=CENTRAL_ENDPOINT):
         """
         Provider for API token APIs
 
@@ -32,10 +32,13 @@ class CentralApiTokenProviderV1:
         self._cmd = cmd
         self._app_id = app_id
         self._token = token
+        self.central_dns_suffix = central_dns_suffix
 
     def add_api_token(
-        self, token_id: str, role: Role, central_dns_suffix=CENTRAL_ENDPOINT,
+        self, token_id: str, role: Role, central_dns_suffix=None,
     ):
+        if central_dns_suffix == None: 
+            central_dns_suffix = self.central_dns_suffix
         token = _utility.get_token_credential(self._cmd)
         apiClient = IotCentralApiV1(token, self._app_id, central_dns_suffix)
         payload = {
@@ -44,22 +47,28 @@ class CentralApiTokenProviderV1:
         return apiClient.api_tokens.set(token_id, payload)
 
     def get_api_token_list(
-        self, central_dns_suffix=CENTRAL_ENDPOINT,
+        self, central_dns_suffix=None,
     ):
+        if central_dns_suffix == None: 
+            central_dns_suffix = self.central_dns_suffix
         token = _utility.get_token_credential(self._cmd)
         apiClient = IotCentralApiV1(token, self._app_id, central_dns_suffix)
         return apiClient.api_tokens.list()
 
     def get_api_token(
-        self, token_id, central_dns_suffix=CENTRAL_ENDPOINT,
+        self, token_id, central_dns_suffix=None,
     ):
+        if central_dns_suffix == None: 
+            central_dns_suffix = self.central_dns_suffix
         token = _utility.get_token_credential(self._cmd)
         apiClient = IotCentralApiV1(token, self._app_id, central_dns_suffix)
         return apiClient.api_tokens.get(token_id)
 
     def delete_api_token(
-        self, token_id, central_dns_suffix=CENTRAL_ENDPOINT,
+        self, token_id, central_dns_suffix=None,
     ):
+        if central_dns_suffix == None: 
+            central_dns_suffix = self.central_dns_suffix
         token = _utility.get_token_credential(self._cmd)
         apiClient = IotCentralApiV1(token, self._app_id, central_dns_suffix)
         return apiClient.api_tokens.remove(token_id)

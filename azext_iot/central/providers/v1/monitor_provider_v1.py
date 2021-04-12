@@ -32,10 +32,10 @@ class MonitorProviderV1:
         central_dns_suffix: str,
     ):
         central_device_provider = CentralDeviceProviderV1(
-            cmd=cmd, app_id=app_id, token=token
+            cmd=cmd, app_id=app_id, token=token, central_dns_suffix=central_dns_suffix
         )
         central_template_provider = CentralDeviceTemplateProviderV1(
-            cmd=cmd, app_id=app_id, token=token
+            cmd=cmd, app_id=app_id, token=token, central_dns_suffix=central_dns_suffix
         )
         self._targets = self._build_targets(
             cmd=cmd,

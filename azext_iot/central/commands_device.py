@@ -27,7 +27,7 @@ def get_device(
     supported_versions = [PREVIEW, V1]
     version = process_version(supported_versions, version)
     if(version == PREVIEW):
-            provider = CentralDeviceProviderPreview(cmd=cmd, app_id=app_id, token=token)
+        provider = CentralDeviceProviderPreview(cmd=cmd, app_id=app_id, token=token)
     elif(version == V1):
         provider = CentralDeviceProviderV1(cmd=cmd, app_id=app_id, token=token)
     else:
@@ -164,7 +164,7 @@ def get_command_history(
     else:
         throw_unsupported_version(supported_versions)
     return provider.get_component_command_history(
-        device_id=device_id, interface_id=interface_id, command_name=command_name,
+        device_id=device_id, interface_id=interface_id, command_name=command_name, central_dns_suffix=central_dns_suffix
     )
 
 

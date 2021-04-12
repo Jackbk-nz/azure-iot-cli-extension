@@ -11,7 +11,7 @@ from azext_iot.central.iot_central_api_v1 import IotCentralApiV1
 from azext_iot.central.services import _utility
 
 class CentralDeviceTemplateProviderV1:
-    def __init__(self, cmd, app_id, token=None):
+    def __init__(self, cmd, app_id, token=None, central_dns_suffix=CENTRAL_ENDPOINT):
         """
         Provider for device_template APIs
 
@@ -27,10 +27,13 @@ class CentralDeviceTemplateProviderV1:
         self._app_id = app_id
         self._token = token
         self._device_templates = {}
+        self.central_dns_suffix = central_dns_suffix
 
     def get_device_template(
-        self, device_template_id, central_dns_suffix=CENTRAL_ENDPOINT,
+        self, device_template_id, central_dns_suffix=None,
     ):
+        if central_dns_suffix == None: 
+            central_dns_suffix = self.central_dns_suffix
         token = _utility.get_token_credential(self._cmd)
         apiClient = IotCentralApiV1(token, self._app_id, central_dns_suffix)
 
@@ -49,8 +52,10 @@ class CentralDeviceTemplateProviderV1:
         self,
         device_template_id: str,
         payload: str,
-        central_dns_suffix=CENTRAL_ENDPOINT,
+        central_dns_suffix=None,
     ):
+        if central_dns_suffix == None: 
+            central_dns_suffix = self.central_dns_suffix
         token = _utility.get_token_credential(self._cmd)
         apiClient = IotCentralApiV1(token, self._app_id, central_dns_suffix)
 
@@ -58,8 +63,10 @@ class CentralDeviceTemplateProviderV1:
 
 
     def delete_device_template(
-        self, device_template_id, central_dns_suffix=CENTRAL_ENDPOINT,
+        self, device_template_id, central_dns_suffix=None,
     ):
+        if central_dns_suffix == None: 
+            central_dns_suffix = self.central_dns_suffix
         if not device_template_id:
             raise CLIError("Device template id must be specified.")
 

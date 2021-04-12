@@ -16,6 +16,7 @@ from .version import VERSION
 from msrest.pipeline import ClientRawResponse
 import uuid
 from . import models
+from ....constants import USER_AGENT
 
 
 class ProvisioningServiceClientConfiguration(AzureConfiguration):
@@ -40,6 +41,7 @@ class ProvisioningServiceClientConfiguration(AzureConfiguration):
         super(ProvisioningServiceClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('provisioningserviceclient/{}'.format(VERSION))
+        self.add_user_agent(USER_AGENT) # @c-ryan-k - added CLI UA string
 
         self.credentials = credentials
 

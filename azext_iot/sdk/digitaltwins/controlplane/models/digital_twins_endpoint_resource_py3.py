@@ -29,7 +29,7 @@ class DigitalTwinsEndpointResource(ExternalResource):
     :param properties: Required. DigitalTwinsInstance endpoint resource
      properties.
     :type properties:
-     ~controlplane.models.DigitalTwinsEndpointResourceProperties
+     ~azure.mgmt.digitaltwins.models.DigitalTwinsEndpointResourceProperties
     """
 
     _validation = {

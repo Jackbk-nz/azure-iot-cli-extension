@@ -21,7 +21,7 @@ logger = get_logger(__name__)
 
 
 class CentralDeviceProviderV1:
-    def __init__(self, cmd, app_id: str, token=None):
+    def __init__(self, cmd, app_id: str, token=None, central_dns_suffix=CENTRAL_ENDPOINT):
         """
         Provider for device APIs
 
@@ -40,15 +40,20 @@ class CentralDeviceProviderV1:
         self._device_templates = {}
         self._device_credentials = {}
         self._device_registration_info = {}
+        self.central_dns_suffix = central_dns_suffix
 
-    def get_device(self, device_id, central_dns_suffix=CENTRAL_ENDPOINT) -> Device:
+    def get_device(self, device_id, central_dns_suffix=None) -> Device:
+        if central_dns_suffix == None: 
+            central_dns_suffix = self.central_dns_suffix
         if not device_id:
             raise CLIError("Device id must be specified.")
         token = _utility.get_token_credential(self._cmd)
         apiClient = IotCentralApiV1(token, self._app_id, central_dns_suffix)
         return apiClient.devices.get(device_id)
 
-    def delete_device(self, device_id, central_dns_suffix=CENTRAL_ENDPOINT) -> Device:
+    def delete_device(self, device_id, central_dns_suffix=None) -> Device:
+        if central_dns_suffix == None: 
+            central_dns_suffix = self.central_dns_suffix
         if not device_id:
             raise CLIError("Device id must be specified.")
         token = _utility.get_token_credential(self._cmd)
@@ -61,8 +66,10 @@ class CentralDeviceProviderV1:
         device_name=None,
         instance_of=None,
         simulated=False,
-        central_dns_suffix=CENTRAL_ENDPOINT,
+        central_dns_suffix=None,
     ) -> Device:
+        if central_dns_suffix == None: 
+            central_dns_suffix = self.central_dns_suffix
         if not device_id:
             raise CLIError("Device id must be specified.")
 
@@ -72,15 +79,21 @@ class CentralDeviceProviderV1:
         token = _utility.get_token_credential(self._cmd)
         apiClient = IotCentralApiV1(token, self._app_id, central_dns_suffix)
 
-        device = Device(diplay_name=device_name, instance_of=instance_of, simulated=simulated)
+        device = Device()
+        device.display_name = device_name
+        device.template = instance_of
+        device.simulated = simulated
+        result = apiClient.devices.set(device_id, device)
         result = apiClient.devices.set(device_id, device)
         if not result:
             raise CLIError("No device found with id: '{}'.".format(device_id))
         return result
 
     def get_device_credentials(
-        self, device_id, central_dns_suffix=CENTRAL_ENDPOINT,
+        self, device_id, central_dns_suffix=None,
     ) -> dict:
+        if central_dns_suffix == None: 
+            central_dns_suffix = self.central_dns_suffix
         token = _utility.get_token_credential(self._cmd)
         apiClient = IotCentralApiV1(token, self._app_id, central_dns_suffix)
 
@@ -97,8 +110,10 @@ class CentralDeviceProviderV1:
     def get_device_registration_info(
         self,
         device_id,
-        central_dns_suffix=CENTRAL_ENDPOINT,
+        central_dns_suffix=None,
     ) -> dict:
+        if central_dns_suffix == None: 
+            central_dns_suffix = self.central_dns_suffix
         dps_state = {}
 
         device = self.get_device(device_id, central_dns_suffix)
@@ -119,6 +134,7 @@ class CentralDeviceProviderV1:
             "display_name": device.display_name,
             "id": device.id,
             "simulated": device.simulated,
+            "template": device.template
         }
 
         info = {
@@ -136,24 +152,30 @@ class CentralDeviceProviderV1:
         interface_id: str,
         command_name: str,
         payload: dict,
-        central_dns_suffix=CENTRAL_ENDPOINT,
+        central_dns_suffix=None,
     ):
+        if central_dns_suffix == None: 
+            central_dns_suffix = self.central_dns_suffix
         token = _utility.get_token_credential(self._cmd)
         apiClient = IotCentralApiV1(token, self._app_id, central_dns_suffix)
-        return apiClient.devices.execute_component_command(device_id, interface_id, command_name, payload)
+        return apiClient.devices.execute_command(device_id, command_name, payload)
 
     def get_component_command_history(
         self,
         device_id: str,
         interface_id: str,
         command_name: str,
-        central_dns_suffix=CENTRAL_ENDPOINT,
+        central_dns_suffix=None,
     ):
+        if central_dns_suffix == None: 
+            central_dns_suffix = self.central_dns_suffix
         token = _utility.get_token_credential(self._cmd)
         apiClient = IotCentralApiV1(token, self._app_id, central_dns_suffix)
-        return apiClient.devices.get_component_command_history(device_id, interface_id, command_name)
+        return apiClient.devices.get_command_history(device_id, command_name)
 
-    def get_device_registration_summary(self, central_dns_suffix=CENTRAL_ENDPOINT):
+    def get_device_registration_summary(self, central_dns_suffix=None):
+        if central_dns_suffix == None: 
+            central_dns_suffix = self.central_dns_suffix
         token = _utility.get_token_credential(self._cmd)
         apiClient = IotCentralApiV1(token, self._app_id, central_dns_suffix)
         
@@ -161,4 +183,9 @@ class CentralDeviceProviderV1:
         "This command may take a long time to complete if your app contains a lot of devices"
         )
 
-        return apiClient.devices.list()
+        devices = apiClient.devices.list()
+        registration_summary = {status.value: 0 for status in DeviceStatus}
+        for device in devices:
+            status = parse_device_status(device);
+            registration_summary[status.value] += 1
+        return registration_summary

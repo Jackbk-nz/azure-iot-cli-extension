@@ -41,9 +41,9 @@ def load_central_commands(self, _):
     with self.command_group(
         "iot central diagnostics", command_type=central_monitor_ops, is_preview=True
     ) as cmd_group:
-        cmd_group.command("monitor-events", "monitor_events") # no version
+        cmd_group.command("monitor-events", "monitor_events")
         cmd_group.command(
-            "validate-messages", "validate_messages", # no version
+            "validate-messages", "validate_messages", 
         )
         cmd_group.command(
             "monitor-properties", "monitor_properties", 

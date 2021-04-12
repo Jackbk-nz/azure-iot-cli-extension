@@ -8,7 +8,7 @@ from azext_iot.central.providers.v1.device_provider_v1 import CentralDeviceProvi
 from azext_iot.central.providers.v1.device_template_provider_v1 import CentralDeviceTemplateProviderV1
 from azext_iot.central.providers.v1.user_provider_v1 import CentralUserProviderV1
 from azext_iot.central.providers.v1.api_token_provider_v1 import CentralApiTokenProviderV1
-from azext_iot.central.providers.v1.monitor_provider_preview import MonitorProviderV1
+from azext_iot.central.providers.v1.monitor_provider_v1 import MonitorProviderV1
 
 __all__ = [
     "CentralDeviceProviderV1",

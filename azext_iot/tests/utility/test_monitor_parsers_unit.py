@@ -10,8 +10,8 @@ import pytest
 
 from uamqp.message import Message, MessageProperties
 from azext_iot.central.providers import (
-    CentralDeviceProvider,
-    CentralDeviceTemplateProvider,
+    CentralDeviceProviderPreview,
+    CentralDeviceTemplateProviderPreview,
 )
 from azext_iot.central.models.template import Template
 from azext_iot.central.models.device import Device
@@ -610,8 +610,8 @@ class TestCentralParser:
     def _create_parser(
         self, device_template: Template, message: Message, args: CommonParserArguments
     ):
-        device_provider = CentralDeviceProvider(cmd=None, app_id=None)
-        template_provider = CentralDeviceTemplateProvider(cmd=None, app_id=None)
+        device_provider = CentralDeviceProviderPreview(cmd=None, app_id=None)
+        template_provider = CentralDeviceTemplateProviderPreview(cmd=None, app_id=None)
         device_provider.get_device = mock.MagicMock(return_value=Device({}))
         template_provider.get_device_template = mock.MagicMock(
             return_value=device_template
